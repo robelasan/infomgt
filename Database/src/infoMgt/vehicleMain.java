@@ -24,10 +24,15 @@ import java.awt.Choice;
 import java.awt.Checkbox;
 import javax.swing.JComboBox;
 import javax.swing.ImageIcon;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.border.LineBorder;
 import java.awt.Panel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 
 public class vehicleMain {
@@ -45,7 +50,12 @@ public class vehicleMain {
 	private JTextField vehicle_idTxt;
 	private JTextField startDateTxt;
 	private JTextField endDateTxt;
-	
+	private JComboBox categoryDrop;
+	private JComboBox typeDrop;
+	private JComboBox statusDrop;
+	private Connection connection;
+	private DefaultTableModel model;
+	private PreparedStatement pst;
 	/**
 	 * Launch the application.
 	 */
@@ -63,12 +73,7 @@ public class vehicleMain {
 	}
 
 	
-	public vehicleMain() {
-		initialize();
-	}
-	
-	
-	private void initialize() {
+	public vehicleMain() throws ClassNotFoundException, SQLException {
 		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(64, 0, 64));
@@ -82,9 +87,17 @@ public class vehicleMain {
 		vehiclePanel.setBounds(125, 110, 835, 480);
 		frame.getContentPane().add(vehiclePanel);
 		vehiclePanel.setLayout(null);
-		
-		vehicleTable = new JTable();
-		vehicleTable.setBounds(10, 44, 565, 426);
+	
+		model = new DefaultTableModel();
+		model.addColumn("id");
+		model.addColumn("category");
+		model.addColumn("type");
+		model.addColumn("model");
+		model.addColumn("seats");
+		model.addColumn("status");
+		vehicleTable = new JTable(model);
+		vehicleTable.setBounds(10, 90, 565, 380);
+		vehicleTable.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		vehiclePanel.add(vehicleTable);
 		
 		vehicleSidePanel = new JPanel();
@@ -131,6 +144,7 @@ public class vehicleMain {
 		vehicleSidePanel.add(statusLbl);
 		
 		idTxt = new JTextField();
+		idTxt.setEditable(false);
 		idTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		idTxt.setBounds(90, 90, 140, 30);
 		vehicleSidePanel.add(idTxt);
@@ -142,7 +156,7 @@ public class vehicleMain {
 		modelTxt.setBounds(90, 195, 140, 30);
 		vehicleSidePanel.add(modelTxt);
 		
-		JComboBox categoryDrop = new JComboBox();
+		categoryDrop = new JComboBox();
 		categoryDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		categoryDrop.setBounds(90, 125, 140, 30);
 		vehicleSidePanel.add(categoryDrop);
@@ -150,14 +164,14 @@ public class vehicleMain {
 		categoryDrop.addItem("SUV");
 		categoryDrop.addItem("VAN");
 		
-		JComboBox typeDrop = new JComboBox();
+		typeDrop = new JComboBox();
 		typeDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		typeDrop.setBounds(90, 160, 140, 30);
 		vehicleSidePanel.add(typeDrop);
 		typeDrop.addItem("Manual");
 		typeDrop.addItem("Automatic");
 		
-		JComboBox statusDrop = new JComboBox();
+		statusDrop = new JComboBox();
 		statusDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		statusDrop.setBounds(90, 265, 140, 30);
 		vehicleSidePanel.add(statusDrop);
@@ -208,7 +222,8 @@ public class vehicleMain {
 			public void mouseClicked(MouseEvent e) {
 				smallEdit.setVisible(false);
 				bigEdit.setVisible(true);
-				//execute create method
+				
+				edit();
 			}
 		});
 		
@@ -233,7 +248,8 @@ public class vehicleMain {
 			public void mouseClicked(MouseEvent e) {
 				smallDelete.setVisible(false);
 				bigDelete.setVisible(true);
-				//execute create method
+
+				delete();
 			}
 		});
 		
@@ -242,7 +258,8 @@ public class vehicleMain {
 			public void mouseClicked(MouseEvent e) {
 				smallCreate.setVisible(false);
 				bigCreate.setVisible(true);
-				//execute create method
+				
+				create();
 			}
 		});
 		
@@ -261,6 +278,30 @@ public class vehicleMain {
 		sortLbl.setHorizontalAlignment(SwingConstants.TRAILING);
 		sortLbl.setBounds(401, 15, 46, 14);
 		vehiclePanel.add(sortLbl);
+		
+		JLabel idHeader = new JLabel("ID");
+		idHeader.setBounds(49, 65, 46, 14);
+		vehiclePanel.add(idHeader);
+		
+		JLabel categoryHeader = new JLabel("Category");
+		categoryHeader.setBounds(120, 65, 56, 14);
+		vehiclePanel.add(categoryHeader);
+		
+		JLabel typeHeader = new JLabel("Type");
+		typeHeader.setBounds(227, 65, 46, 14);
+		vehiclePanel.add(typeHeader);
+		
+		JLabel modelHeader = new JLabel("Model");
+		modelHeader.setBounds(320, 65, 46, 14);
+		vehiclePanel.add(modelHeader);
+		
+		JLabel seatsHeader = new JLabel("Seats");
+		seatsHeader.setBounds(418, 65, 46, 14);
+		vehiclePanel.add(seatsHeader);
+		
+		JLabel statusHeader = new JLabel("Status");
+		statusHeader.setBounds(508, 65, 46, 14);
+		vehiclePanel.add(statusHeader);
 		
 		JPanel renterPanel = new JPanel();
 		renterPanel.setBackground(new Color(255, 255, 255));
@@ -479,9 +520,6 @@ public class vehicleMain {
 	});
 		
 		
-		
-		
-		
 		JLabel renterTab = new JLabel("RENTER");
 		renterTab.setBackground(new Color(255, 255, 255));
 		renterTab.setBounds(0, 0, 125, 50);
@@ -506,6 +544,143 @@ public class vehicleMain {
 		bgLbl.setBounds(0, 0, 959, 589);
 		frame.getContentPane().add(bgLbl);
 		
+		
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String url = "jdbc:sqlserver://FELIX;databaseName=AdaMayumi;encrypt=true;trustServerCertificate=true;";
+			String username = "sa";
+			String password = "asd";
+			connection = DriverManager.getConnection(url, username, password);
+			System.out.println("Connected");
+			loadRecords();
+		} 
+		catch (SQLException e){
+			System.out.println("error");
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	private void loadRecords() {
+	    model.setRowCount(0); // Clear existing table data
+	    try {
+	        PreparedStatement statement = connection.prepareStatement("SELECT * FROM Vehicle");
+	        ResultSet resultSet = statement.executeQuery();
+	        while (resultSet.next()) {
+	            int id = resultSet.getInt("vehicle_id");
+	            String category = resultSet.getString("vehicle_category");
+	            String type = resultSet.getString("vehicle_type");
+	            String vehicleModel = resultSet.getString("vehicle_model"); // Rename this variable
+	            String seats = resultSet.getString("seats");	             
+	            int availability = resultSet.getInt("status");
+	            model.addRow(new Object[]{id, category, type, vehicleModel, seats, availability});
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(frame, "Failed to load records.", "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+	
+	private void create() {
+		String modeltxt = modelTxt.getText();
+		String seats = seatsTxt.getText();
+		Object rentstat = statusDrop.getSelectedItem();
+		boolean rented = false;
+		if(rentstat.equals("Rented")) {
+			rented = true;
+		}
+		else {
+			rented = false;
+		}
+		
+		
+		try {
+			pst = connection.prepareStatement("insert into Vehicle(vehicle_category, vehicle_type, vehicle_model, seats, status)values(?,?,?,?,?)");
+			
+			pst.setObject(1, categoryDrop.getSelectedItem());
+			pst.setObject(2, typeDrop.getSelectedItem());
+			pst.setObject(3, modeltxt);
+			pst.setObject(4, seats);
+			pst.setObject(5, rented);
+			pst.executeUpdate();
+			loadRecords();
+		}
+		
+		catch(SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void delete() {
+		int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this row?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+		if(reply == JOptionPane.YES_OPTION) {
+			
+		try {
+			
+			int i = vehicleTable.getSelectedRow();
+			
+			Object id = model.getValueAt(i, 0);
+			model.removeRow(i);
+			System.out.println(id);
+			
+			pst = connection.prepareStatement("DELETE FROM Vehicle WHERE vehicle_id = " + id + ";");
+			pst.executeUpdate();
+			loadRecords();
+		}
+		catch(SQLException e2) {
+			e2.printStackTrace();
+		}
+		}
+	}
+	
+	private void edit() {
+		int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to edit this row?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+		if(reply == JOptionPane.YES_OPTION) {
+		int selectedRow = vehicleTable.getSelectedRow();
+		
+		 if (selectedRow != -1) {
+			 
+			 Object category = categoryDrop.getSelectedItem();
+			 Object type = typeDrop.getSelectedItem();
+			 String model = modelTxt.getText();
+			 String seats = seatsTxt.getText();
+			 Object status = statusDrop.getSelectedItem();
+			 Object rentstat = statusDrop.getSelectedItem();
+			 boolean rented = false;
+			 if(rentstat.equals("Rented")) {
+				 rented = true;
+			 }
+			 else {
+				 rented = false;
+			 }
+			 
+			 
+			 try {
+				Object id = vehicleTable.getValueAt(selectedRow, 0);
+				pst = connection.prepareStatement("UPDATE Vehicle SET vehicle_category = ?, vehicle_type = ?, vehicle_model = ?, seats = ?, status = ? WHERE vehicle_id = ?");
+				pst.setObject(1, category);
+				pst.setObject(2, type);
+				pst.setObject(3, model);
+		        pst.setObject(4, seats);
+		        pst.setObject(5, rented);
+		        pst.setObject(6, id);
+		       
+				 
+				 pst.executeUpdate();
+				 JOptionPane.showMessageDialog(null, "Record updated successfully.");
+				 loadRecords();
+
+			 }
+			 catch(SQLException e) {
+				 e.printStackTrace();
+			 }
+		 }
+		 else {
+			 JOptionPane.showMessageDialog(null, "Please select a row to update.");
+		 }
+	}
 	}
 	
 	private class TabButton extends MouseAdapter{
@@ -551,3 +726,4 @@ public class vehicleMain {
 		}
 	}
 }
+	
