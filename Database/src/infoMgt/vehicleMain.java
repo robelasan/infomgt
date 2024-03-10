@@ -33,6 +33,8 @@ import javax.swing.border.LineBorder;
 import java.awt.Panel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
 
 
 public class vehicleMain {
@@ -43,22 +45,25 @@ public class vehicleMain {
 	private JTextField idTxt;
 	private JTextField modelTxt;
 	private JTextField seatsTxt;
-	private JTable renterTable;
-	private JTextField renterIDTxt;
-	private JTextField renterNameTxt;
-	private JTextField phoneTxt;
-	private JTextField vehicle_idTxt;
-	private JTextField startDateTxt;
-	private JTextField endDateTxt;
 	private JComboBox categoryDrop;
 	private JComboBox typeDrop;
 	private JComboBox statusDrop;
+	private JComboBox sortDrop;
 	private Connection connection;
-	private DefaultTableModel model;
+	private DefaultTableModel vehicleModel;
 	private PreparedStatement pst;
-	/**
-	 * Launch the application.
-	 */
+	
+	private JPanel vehiclePanel;
+	private JPanel vehicleTabPanel;
+	private JPanel renterTabPanel;
+	private JPanel rentTabPanel;
+	private JPanel historyTabPanel;
+	private JPanel displayPanel;
+	
+	private renterPanel renterpanel;
+	private rentPanel rentpanel;
+	private historyPanel historypanel;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -81,24 +86,55 @@ public class vehicleMain {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setLocationRelativeTo(null);
-		
-		JPanel vehiclePanel = new JPanel();
-		vehiclePanel.setBackground(new Color(255, 255, 255));
-		vehiclePanel.setBounds(125, 110, 835, 480);
-		frame.getContentPane().add(vehiclePanel);
-		vehiclePanel.setLayout(null);
 	
-		model = new DefaultTableModel();
-		model.addColumn("id");
-		model.addColumn("category");
-		model.addColumn("type");
-		model.addColumn("model");
-		model.addColumn("seats");
-		model.addColumn("status");
-		vehicleTable = new JTable(model);
-		vehicleTable.setBounds(10, 90, 565, 380);
+		renterpanel = new renterPanel();
+		rentpanel = new rentPanel();
+		historypanel = new historyPanel();
+		
+		vehicleModel = new DefaultTableModel();
+		vehicleModel.addColumn("ID");
+		vehicleModel.addColumn("Category");
+		vehicleModel.addColumn("Type");
+		vehicleModel.addColumn("Model");
+		vehicleModel.addColumn("Seats");
+		vehicleModel.addColumn("Status");
+		
+		displayPanel = new JPanel();
+		displayPanel.setBounds(125, 110, 835, 480);
+		frame.getContentPane().add(displayPanel);
+		displayPanel.setLayout(null);
+		
+		vehiclePanel = new JPanel();
+		vehiclePanel.setBounds(0, 0, 835, 480);
+		displayPanel.add(vehiclePanel);
+		vehiclePanel.setBackground(new Color(255, 255, 255));
+		vehiclePanel.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 90, 565, 380);
+		vehiclePanel.add(scrollPane);
+		vehicleTable = new JTable(vehicleModel);
+		vehicleTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int selectedrow = vehicleTable.getSelectedRow();
+				Object id = vehicleModel.getValueAt(selectedrow, 0);
+				Object category = vehicleModel.getValueAt(selectedrow, 1);
+				Object type = vehicleModel.getValueAt(selectedrow, 2);
+				Object model = vehicleModel.getValueAt(selectedrow, 3);
+				Object seats = vehicleModel.getValueAt(selectedrow, 4);
+				Object status = vehicleModel.getValueAt(selectedrow, 5);
+				
+				idTxt.setText(id.toString());
+				categoryDrop.setSelectedItem(category);
+				typeDrop.setSelectedItem(type);
+				modelTxt.setText(model.toString());
+				seatsTxt.setText(seats.toString());
+				statusDrop.setSelectedItem(status);
+			}
+		});
+		scrollPane.setViewportView(vehicleTable);
 		vehicleTable.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		vehiclePanel.add(vehicleTable);
 		
 		vehicleSidePanel = new JPanel();
 		vehicleSidePanel.setBorder(new LineBorder(new Color(128, 0, 128), 3, true));
@@ -263,238 +299,25 @@ public class vehicleMain {
 			}
 		});
 		
-		JComboBox sortDrop = new JComboBox();
+		sortDrop = new JComboBox();
 		sortDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sortDrop.setBounds(457, 10, 118, 22);
+		sortDrop.setBounds(457, 60, 118, 20);
 		vehiclePanel.add(sortDrop);
+		sortDrop.addItem("NONE");
 		sortDrop.addItem("SEDAN");
 		sortDrop.addItem("SUV");
 		sortDrop.addItem("VAN");
 		sortDrop.addItem("AVAILABLE");
 		sortDrop.addItem("RENTED");
 		
-		JLabel sortLbl = new JLabel("SORT:");
-		sortLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sortLbl.setHorizontalAlignment(SwingConstants.TRAILING);
-		sortLbl.setBounds(401, 15, 46, 14);
-		vehiclePanel.add(sortLbl);
-		
-		JLabel idHeader = new JLabel("ID");
-		idHeader.setBounds(49, 65, 46, 14);
-		vehiclePanel.add(idHeader);
-		
-		JLabel categoryHeader = new JLabel("Category");
-		categoryHeader.setBounds(120, 65, 56, 14);
-		vehiclePanel.add(categoryHeader);
-		
-		JLabel typeHeader = new JLabel("Type");
-		typeHeader.setBounds(227, 65, 46, 14);
-		vehiclePanel.add(typeHeader);
-		
-		JLabel modelHeader = new JLabel("Model");
-		modelHeader.setBounds(320, 65, 46, 14);
-		vehiclePanel.add(modelHeader);
-		
-		JLabel seatsHeader = new JLabel("Seats");
-		seatsHeader.setBounds(418, 65, 46, 14);
-		vehiclePanel.add(seatsHeader);
-		
-		JLabel statusHeader = new JLabel("Status");
-		statusHeader.setBounds(508, 65, 46, 14);
-		vehiclePanel.add(statusHeader);
-		
-		JPanel renterPanel = new JPanel();
-		renterPanel.setBackground(new Color(255, 255, 255));
-		renterPanel.setBounds(125, 110, 835, 480);
-		frame.getContentPane().add(renterPanel);
-		renterPanel.setLayout(null);
-		
-		renterTable = new JTable();
-		renterTable.setBounds(10, 44, 565, 426);
-		renterPanel.add(renterTable);
-		
-		JPanel renterSidePanel = new JPanel();
-		renterSidePanel.setBorder(new LineBorder(new Color(128, 0, 128), 3));
-		renterSidePanel.setBounds(585, 10, 239, 459);
-		renterPanel.add(renterSidePanel);
-		renterSidePanel.setLayout(null);
-		
-		JLabel renterHeader = new JLabel("RENTER");
-		renterHeader.setHorizontalAlignment(SwingConstants.CENTER);
-		renterHeader.setFont(new Font("Tahoma", Font.BOLD, 20));
-		renterHeader.setBounds(10, 10, 220, 60);
-		renterSidePanel.add(renterHeader);
-		
-		JLabel renterID = new JLabel("ID:");
-		renterID.setForeground(Color.BLACK);
-		renterID.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		renterID.setBounds(10, 95, 35, 15);
-		renterSidePanel.add(renterID);
-		
-		JLabel nameLbl = new JLabel("Name:");
-		nameLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		nameLbl.setBounds(10, 130, 46, 15);
-		renterSidePanel.add(nameLbl);
-		
-		JLabel phoneLbl = new JLabel("Phone:");
-		phoneLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		phoneLbl.setBounds(10, 165, 46, 15);
-		renterSidePanel.add(phoneLbl);
-		
-		JLabel vehicle_id = new JLabel("Vehicle ID:");
-		vehicle_id.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		vehicle_id.setBounds(10, 200, 65, 15);
-		renterSidePanel.add(vehicle_id);
-		
-		JLabel startDate = new JLabel("Start Date:");
-		startDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		startDate.setBounds(10, 235, 70, 15);
-		renterSidePanel.add(startDate);
-		
-		JLabel endDate = new JLabel("End Date:");
-		endDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		endDate.setBounds(10, 270, 70, 15);
-		renterSidePanel.add(endDate);
-		
-		renterIDTxt = new JTextField();
-		renterIDTxt.setBounds(90, 90, 140, 30);
-		renterSidePanel.add(renterIDTxt);
-		renterIDTxt.setColumns(10);
-		
-		renterNameTxt = new JTextField();
-		renterNameTxt.setColumns(10);
-		renterNameTxt.setBounds(90, 125, 140, 30);
-		renterSidePanel.add(renterNameTxt);
-		
-		phoneTxt = new JTextField();
-		phoneTxt.setColumns(10);
-		phoneTxt.setBounds(90, 160, 140, 30);
-		renterSidePanel.add(phoneTxt);
-		
-		vehicle_idTxt = new JTextField();
-		vehicle_idTxt.setColumns(10);
-		vehicle_idTxt.setBounds(90, 195, 140, 30);
-		renterSidePanel.add(vehicle_idTxt);
-		
-		startDateTxt = new JTextField();
-		startDateTxt.setColumns(10);
-		startDateTxt.setBounds(90, 230, 140, 30);
-		renterSidePanel.add(startDateTxt);
-		
-		endDateTxt = new JTextField();
-		endDateTxt.setColumns(10);
-		endDateTxt.setBounds(90, 265, 140, 30);
-		renterSidePanel.add(endDateTxt);
-		
-		JPanel createRent = new JPanel();
-		createRent.setBounds(20, 355, 100, 40);
-		renterSidePanel.add(createRent);
-		createRent.setLayout(null);
-		
-		JLabel smallC = new JLabel("");
-		smallC.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/smallCreate.png")));
-		smallC.setBounds(10, 5, 80, 30);
-		createRent.add(smallC);
-		
-		JLabel bigC = new JLabel("");
-		bigC.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/bigCreate.png")));
-		bigC.setBounds(0, 0, 100, 40);
-		createRent.add(bigC);
-		
-		JPanel editRent = new JPanel();
-		editRent.setBounds(120, 355, 100, 40);
-		renterSidePanel.add(editRent);
-		editRent.setLayout(null);
-		
-		JLabel smallE = new JLabel("");
-		smallE.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/smallEdit.png")));
-		smallE.setBounds(10, 5, 80, 30);
-		editRent.add(smallE);
-		
-		JLabel bigE = new JLabel("");
-		bigE.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/bigEdit.png")));
-		bigE.setBounds(0, 0, 100, 40);
-		editRent.add(bigE);
-		
-		JPanel deleteRent = new JPanel();
-		deleteRent.setBounds(70, 400, 100, 40);
-		renterSidePanel.add(deleteRent);
-		deleteRent.setLayout(null);
-		
-		JLabel smallD = new JLabel("");
-		smallD.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/smallDelete.png")));
-		smallD.setBounds(10, 5, 80, 30);
-		deleteRent.add(smallD);
-		
-		JLabel bigD = new JLabel("");
-		bigD.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/bigDelete.png")));
-		bigD.setBounds(0, 0, 100, 40);
-		deleteRent.add(bigD);
-		
-		bigD.setVisible(false);
-		bigE.setVisible(false);
-		bigC.setVisible(false);
-		
-		deleteRent.addMouseListener(new IconMouseAdapter(deleteRent, smallD, bigD) {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				smallD.setVisible(false);
-				bigD.setVisible(true);
-				//execute create method
-			}
-		});
-		
-		createRent.addMouseListener(new IconMouseAdapter(createRent, smallC, bigC) {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				smallC.setVisible(false);
-				bigC.setVisible(true);
-				//execute create method
-			}
-		});
-		
-		editRent.addMouseListener(new IconMouseAdapter(editRent, smallE, bigE) {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				smallE.setVisible(false);
-				bigE.setVisible(true);
-				//execute create method
-			}
-		});
-		
-		JComboBox sortRenter = new JComboBox();
-		sortRenter.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sortRenter.setBounds(457, 10, 118, 22);
-		renterPanel.add(sortRenter);
-		sortRenter.addItem("ID");
-		
-		
-		JLabel sortRenterLbl = new JLabel("SORT:");
-		sortRenterLbl.setHorizontalAlignment(SwingConstants.TRAILING);
-		sortRenterLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sortRenterLbl.setBounds(401, 15, 46, 14);
-		renterPanel.add(sortRenterLbl);
-		
-		JLabel companyLbl = new JLabel("ADA MAYUMI TRANSPORT AND LOGISTICS MONITORING SYSTEM");
-		companyLbl.setForeground(new Color(255, 255, 255));
-		companyLbl.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
-		companyLbl.setBounds(158, 15, 791, 78);
-		frame.getContentPane().add(companyLbl);
-		
-		
-		JLabel logoLbl = new JLabel("");
-		logoLbl.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/logo.png")));
-		logoLbl.setBounds(10, 11, 138, 78);
-		frame.getContentPane().add(logoLbl);
-		
-		JPanel vehicleTabPanel = new JPanel();
+		vehicleTabPanel = new JPanel();
 		vehicleTabPanel.setBackground(new Color(255, 255, 255));
 		vehicleTabPanel.setBounds(0, 110, 125, 50);
 		frame.getContentPane().add(vehicleTabPanel);
 		vehicleTabPanel.setLayout(null);
 		vehicleTabPanel.setOpaque(false);
 		
-		JPanel renterTabPanel = new JPanel();
+		renterTabPanel = new JPanel();
 		renterTabPanel.setBackground(new Color(255, 255, 255));
 		renterTabPanel.setBounds(0, 160, 125, 50);
 		frame.getContentPane().add(renterTabPanel);
@@ -507,18 +330,15 @@ public class vehicleMain {
 		vehicleTab.setForeground(new Color(0, 0, 0));
 		vehicleTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
 		vehicleTab.setHorizontalAlignment(SwingConstants.CENTER);
-		vehicleTab.addMouseListener(new TabButton(vehicleTab,vehicleTabPanel){
+		vehicleTab.addMouseListener(new TabButton(vehicleTab){
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				vehicleTab.setForeground(Color.WHITE);
-				renterPanel.setVisible(false);
-				vehiclePanel.setVisible(true);
-				renterTabPanel.setOpaque(false);
-				vehicleTabPanel.setOpaque(true);
 				vehicleTabPanel.setBackground(Color.decode("#470E8E"));
+				vehicleTab.setForeground(Color.WHITE);
+				menuClicked(vehiclePanel);				
+				Opaque(vehicleTabPanel);			
 		}
 	});
-		
 		
 		JLabel renterTab = new JLabel("RENTER");
 		renterTab.setBackground(new Color(255, 255, 255));
@@ -527,23 +347,102 @@ public class vehicleMain {
 		renterTab.setForeground(new Color(0, 0, 0));
 		renterTab.setHorizontalAlignment(SwingConstants.CENTER);
 		renterTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
-		renterTab.addMouseListener(new TabButton(renterTab,renterTabPanel){
+		renterTab.addMouseListener(new TabButton(renterTab){
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				renterTab.setForeground(Color.WHITE);
-				vehiclePanel.setVisible(false);
-				renterPanel.setVisible(true);
-				renterTabPanel.setOpaque(true);
 				renterTabPanel.setBackground(Color.decode("#470E8E"));
-				vehicleTabPanel.setOpaque(false);
-				
+				menuClicked(renterpanel);
+				Opaque(renterTabPanel);
 		}
 	});
+		
+		rentTabPanel = new JPanel();
+		rentTabPanel.setLayout(null);
+		rentTabPanel.setOpaque(false);
+		rentTabPanel.setBackground(Color.WHITE);
+		rentTabPanel.setBounds(0, 210, 125, 50);
+		frame.getContentPane().add(rentTabPanel);
+		
+		JLabel rentTab = new JLabel("RENT");
+		rentTab.setHorizontalAlignment(SwingConstants.CENTER);
+		rentTab.setForeground(Color.BLACK);
+		rentTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
+		rentTab.setBackground(Color.WHITE);
+		rentTab.setBounds(0, 0, 125, 50);
+		rentTabPanel.add(rentTab);
+		
+		historyTabPanel = new JPanel();
+		historyTabPanel.setLayout(null);
+		historyTabPanel.setOpaque(false);
+		historyTabPanel.setBackground(Color.WHITE);
+		historyTabPanel.setBounds(0, 260, 125, 50);
+		frame.getContentPane().add(historyTabPanel);
+		
+		JLabel historyTab = new JLabel("HISTORY");
+		historyTab.setHorizontalAlignment(SwingConstants.CENTER);
+		historyTab.setForeground(Color.BLACK);
+		historyTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
+		historyTab.setBackground(Color.WHITE);
+		historyTab.setBounds(0, 0, 125, 50);
+		historyTabPanel.add(historyTab);
+		
+		rentTab.addMouseListener(new TabButton(rentTab) {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				rentTab.setForeground(Color.WHITE);
+				rentTabPanel.setBackground(Color.decode("#470E8E"));
+				menuClicked(rentpanel);
+				Opaque(rentTabPanel);
+			}
+		});
+		
+		historyTab.addMouseListener(new TabButton(historyTab) {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				historyTab.setForeground(Color.WHITE);
+				historyTabPanel.setBackground(Color.decode("#470E8E"));
+				menuClicked(historypanel);
+				Opaque(historyTabPanel);
+				
+			}
+		});
+		
+		
+		JLabel logoLbl = new JLabel("");
+		logoLbl.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/logo.png")));
+		logoLbl.setBounds(10, 11, 138, 78);
+		frame.getContentPane().add(logoLbl);
+		
+		JLabel companyLbl = new JLabel("ADA MAYUMI TRANSPORT AND LOGISTICS MONITORING SYSTEM");
+		companyLbl.setForeground(new Color(255, 255, 255));
+		companyLbl.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
+		companyLbl.setBounds(158, 15, 791, 78);
+		frame.getContentPane().add(companyLbl);
+		
 		JLabel bgLbl = new JLabel("");
 		bgLbl.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/background.png")));
 		bgLbl.setBounds(0, 0, 959, 589);
 		frame.getContentPane().add(bgLbl);
 		
+		displayPanel.add(renterpanel);
+		displayPanel.add(rentpanel);
+		displayPanel.add(historypanel);
+		
+		menuClicked(vehiclePanel);
+		
+//		selectedRow();
+		
+		JButton sortBtn = new JButton("SORT");
+		sortBtn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		sortBtn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				sort();
+			}
+		});
+		sortBtn.setBounds(380, 60, 70, 20);
+		vehiclePanel.add(sortBtn);
 		
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -551,20 +450,26 @@ public class vehicleMain {
 			String username = "sa";
 			String password = "asd";
 			connection = DriverManager.getConnection(url, username, password);
-			System.out.println("Connected");
+			System.out.println("Vehicle Table Connected");
 			loadRecords();
 		} 
 		catch (SQLException e){
 			System.out.println("error");
 			e.printStackTrace();
 		}
+	}
+	
+	private void menuClicked(JPanel panel) {
+		vehiclePanel.setVisible(false);
+		renterpanel.setVisible(false);
+		rentpanel.setVisible(false);
+		historypanel.setVisible(false);
 		
-		
-		
+		panel.setVisible(true);
 	}
 	
 	private void loadRecords() {
-	    model.setRowCount(0); // Clear existing table data
+		vehicleModel.setRowCount(0); // Clear existing table data
 	    try {
 	        PreparedStatement statement = connection.prepareStatement("SELECT * FROM Vehicle");
 	        ResultSet resultSet = statement.executeQuery();
@@ -572,10 +477,10 @@ public class vehicleMain {
 	            int id = resultSet.getInt("vehicle_id");
 	            String category = resultSet.getString("vehicle_category");
 	            String type = resultSet.getString("vehicle_type");
-	            String vehicleModel = resultSet.getString("vehicle_model"); // Rename this variable
+	            String vehiclemodel = resultSet.getString("vehicle_model"); // Rename this variable
 	            String seats = resultSet.getString("seats");	             
-	            int availability = resultSet.getInt("status");
-	            model.addRow(new Object[]{id, category, type, vehicleModel, seats, availability});
+	            String status = resultSet.getString("status");
+	            vehicleModel.addRow(new Object[]{id, category, type, vehiclemodel, seats, status});
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -587,13 +492,6 @@ public class vehicleMain {
 		String modeltxt = modelTxt.getText();
 		String seats = seatsTxt.getText();
 		Object rentstat = statusDrop.getSelectedItem();
-		boolean rented = false;
-		if(rentstat.equals("Rented")) {
-			rented = true;
-		}
-		else {
-			rented = false;
-		}
 		
 		
 		try {
@@ -603,7 +501,7 @@ public class vehicleMain {
 			pst.setObject(2, typeDrop.getSelectedItem());
 			pst.setObject(3, modeltxt);
 			pst.setObject(4, seats);
-			pst.setObject(5, rented);
+			pst.setObject(5, rentstat);
 			pst.executeUpdate();
 			loadRecords();
 		}
@@ -613,81 +511,142 @@ public class vehicleMain {
 		}
 	}
 	
+	private void Opaque(JPanel panel) {
+		vehicleTabPanel.setOpaque(false);
+		renterTabPanel.setOpaque(false);
+		rentTabPanel.setOpaque(false);
+		historyTabPanel.setOpaque(false);
+		
+		panel.setOpaque(true);
+	}
+	
 	private void delete() {
-		int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this row?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
-		if(reply == JOptionPane.YES_OPTION) {
+		int i = vehicleTable.getSelectedRow();
+		if(i != -1) {
+	
+			int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+			if(reply == JOptionPane.YES_OPTION) {
 			
-		try {
+				try {
 			
-			int i = vehicleTable.getSelectedRow();
+					Object id = vehicleModel.getValueAt(i, 0);
+					vehicleModel.removeRow(i);
+					System.out.println(id);
 			
-			Object id = model.getValueAt(i, 0);
-			model.removeRow(i);
-			System.out.println(id);
-			
-			pst = connection.prepareStatement("DELETE FROM Vehicle WHERE vehicle_id = " + id + ";");
-			pst.executeUpdate();
-			loadRecords();
+					pst = connection.prepareStatement("DELETE FROM Vehicle WHERE vehicle_id = " + id + ";");
+					pst.executeUpdate();
+					loadRecords();
+				}
+				catch(SQLException e2) {
+					e2.printStackTrace();
+					JOptionPane.showMessageDialog(null, "This vehicle is currently being rented.", "Failed to delete vehicle", JOptionPane.ERROR_MESSAGE);
+					loadRecords();
+				}
+			}
 		}
-		catch(SQLException e2) {
-			e2.printStackTrace();
-		}
+		else {
+			JOptionPane.showMessageDialog(null, "Please select a row to delete.");
 		}
 	}
 	
 	private void edit() {
-		int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to edit this row?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
-		if(reply == JOptionPane.YES_OPTION) {
+		
 		int selectedRow = vehicleTable.getSelectedRow();
 		
-		 if (selectedRow != -1) {
+		if (selectedRow != -1) {
+			
+			int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to edit this row?", "Warning!", JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+			
+				if(reply == JOptionPane.YES_OPTION) {
 			 
-			 Object category = categoryDrop.getSelectedItem();
-			 Object type = typeDrop.getSelectedItem();
-			 String model = modelTxt.getText();
-			 String seats = seatsTxt.getText();
-			 Object status = statusDrop.getSelectedItem();
-			 Object rentstat = statusDrop.getSelectedItem();
-			 boolean rented = false;
-			 if(rentstat.equals("Rented")) {
-				 rented = true;
-			 }
-			 else {
-				 rented = false;
-			 }
+					Object category = categoryDrop.getSelectedItem();
+					Object type = typeDrop.getSelectedItem();
+					String model = modelTxt.getText();
+					String seats = seatsTxt.getText();
+					Object status = statusDrop.getSelectedItem();
 			 
-			 
-			 try {
-				Object id = vehicleTable.getValueAt(selectedRow, 0);
-				pst = connection.prepareStatement("UPDATE Vehicle SET vehicle_category = ?, vehicle_type = ?, vehicle_model = ?, seats = ?, status = ? WHERE vehicle_id = ?");
-				pst.setObject(1, category);
-				pst.setObject(2, type);
-				pst.setObject(3, model);
-		        pst.setObject(4, seats);
-		        pst.setObject(5, rented);
-		        pst.setObject(6, id);
-		       
+					try {
+						Object id = vehicleTable.getValueAt(selectedRow, 0);
+					pst = connection.prepareStatement("UPDATE Vehicle SET vehicle_category = ?, vehicle_type = ?, vehicle_model = ?, seats = ?, status = ? WHERE vehicle_id = ?");
+					pst.setObject(1, category);
+					pst.setObject(2, type);
+					pst.setObject(3, model);
+			        pst.setObject(4, seats);
+			        pst.setObject(5, status);
+			        pst.setObject(6, id);
 				 
-				 pst.executeUpdate();
-				 JOptionPane.showMessageDialog(null, "Record updated successfully.");
-				 loadRecords();
+					pst.executeUpdate();
+					JOptionPane.showMessageDialog(null, "Record updated successfully.");
+					loadRecords();
 
-			 }
-			 catch(SQLException e) {
-				 e.printStackTrace();
-			 }
-		 }
-		 else {
-			 JOptionPane.showMessageDialog(null, "Please select a row to update.");
-		 }
+					}
+					catch(SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		else {
+			JOptionPane.showMessageDialog(null, "Please select a row to update.");
+		}
 	}
+	
+	private void sort() {
+		vehicleModel.setRowCount(0);
+		Object sort = sortDrop.getSelectedItem();
+		try {	
+			if(sort.equals("SEDAN") || sort.equals("SUV") || sort.equals("VAN")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM Vehicle WHERE vehicle_category = '" + sort + "'");
+				ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+		            int id = resultSet.getInt("vehicle_id");
+		            String category = resultSet.getString("vehicle_category");
+		            String type = resultSet.getString("vehicle_type");
+		            String vehiclemodel = resultSet.getString("vehicle_model"); // Rename this variable
+		            String seats = resultSet.getString("seats");	             
+		            String status = resultSet.getString("status");
+		            vehicleModel.addRow(new Object[]{id, category, type, vehiclemodel, seats, status});
+		        }
+			}
+			else if(sort.equals("NONE")) {
+				loadRecords();
+			}
+			else if(sort.equals("AVAILABLE")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = '" + sort + "'");
+				ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+		            int id = resultSet.getInt("vehicle_id");
+		            String category = resultSet.getString("vehicle_category");
+		            String type = resultSet.getString("vehicle_type");
+		            String vehiclemodel = resultSet.getString("vehicle_model"); // Rename this variable
+		            String seats = resultSet.getString("seats");	             
+		            String status = resultSet.getString("status");
+		            vehicleModel.addRow(new Object[]{id, category, type, vehiclemodel, seats, status});
+		        }
+			}
+			else if(sort.equals("RENTED")) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM Vehicle WHERE status = '" + sort + "'");
+				ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+		            int id = resultSet.getInt("vehicle_id");
+		            String category = resultSet.getString("vehicle_category");
+		            String type = resultSet.getString("vehicle_type");
+		            String vehiclemodel = resultSet.getString("vehicle_model"); // Rename this variable
+		            String seats = resultSet.getString("seats");	             
+		            String status = resultSet.getString("status");
+		            vehicleModel.addRow(new Object[]{id, category, type, vehiclemodel, seats, status});
+		        }
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	private class TabButton extends MouseAdapter{
 		JLabel label;
-		JPanel panel;
-		public TabButton(JLabel label, JPanel panel) {
-			this.panel = panel;
+		
+		public TabButton(JLabel label) {
+			
 			this.label = label;
 		}
 		@Override
