@@ -40,7 +40,7 @@ public class historyPanel extends JPanel {
 	
 	public historyPanel() {
 		
-		setBounds(0, 0, 835, 480);
+		setBounds(0, 0, 915, 540);
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 		

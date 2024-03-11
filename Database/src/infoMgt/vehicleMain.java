@@ -35,11 +35,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
+import java.awt.Toolkit;
 
 
 public class vehicleMain {
 
-	private JFrame frame;
+	private JFrame frmAdaMayumiTransport;
 	private JTable vehicleTable;
 	private JPanel vehicleSidePanel;
 	private JTextField idTxt;
@@ -69,7 +70,7 @@ public class vehicleMain {
 			public void run() {
 				try {
 					vehicleMain window = new vehicleMain();
-					window.frame.setVisible(true);
+					window.frmAdaMayumiTransport.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -80,16 +81,20 @@ public class vehicleMain {
 	
 	public vehicleMain() throws ClassNotFoundException, SQLException {
 		
-		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(64, 0, 64));
-		frame.setBounds(100, 100, 975, 628);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-		frame.setLocationRelativeTo(null);
+		frmAdaMayumiTransport = new JFrame();
+		frmAdaMayumiTransport.setIconImage(Toolkit.getDefaultToolkit().getImage(vehicleMain.class.getResource("/img/logo.png")));
+		frmAdaMayumiTransport.getContentPane().setBackground(new Color(64, 0, 64));
+		frmAdaMayumiTransport.setBounds(100, 100, 1080, 700);
+		frmAdaMayumiTransport.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmAdaMayumiTransport.getContentPane().setLayout(null);
+		frmAdaMayumiTransport.setLocationRelativeTo(null);
 	
 		renterpanel = new renterPanel();
+		renterpanel.setSize(915, 540);
 		rentpanel = new rentPanel();
+		rentpanel.setSize(915, 540);
 		historypanel = new historyPanel();
+		historypanel.setSize(915, 540);
 		
 		vehicleModel = new DefaultTableModel();
 		vehicleModel.addColumn("ID");
@@ -100,18 +105,18 @@ public class vehicleMain {
 		vehicleModel.addColumn("Status");
 		
 		displayPanel = new JPanel();
-		displayPanel.setBounds(125, 110, 835, 480);
-		frame.getContentPane().add(displayPanel);
+		displayPanel.setBounds(150, 120, 915, 540);
+		frmAdaMayumiTransport.getContentPane().add(displayPanel);
 		displayPanel.setLayout(null);
 		
 		vehiclePanel = new JPanel();
-		vehiclePanel.setBounds(0, 0, 835, 480);
+		vehiclePanel.setBounds(0, 0, 915, 540);
 		displayPanel.add(vehiclePanel);
 		vehiclePanel.setBackground(new Color(255, 255, 255));
 		vehiclePanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 90, 565, 380);
+		scrollPane.setBounds(10, 90, 585, 440);
 		vehiclePanel.add(scrollPane);
 		vehicleTable = new JTable(vehicleModel);
 		vehicleTable.addMouseListener(new MouseAdapter() {
@@ -138,63 +143,63 @@ public class vehicleMain {
 		
 		vehicleSidePanel = new JPanel();
 		vehicleSidePanel.setBorder(new LineBorder(new Color(128, 0, 128), 3, true));
-		vehicleSidePanel.setBounds(585, 10, 239, 459);
+		vehicleSidePanel.setBounds(605, 10, 300, 520);
 		vehiclePanel.add(vehicleSidePanel);
 		vehicleSidePanel.setLayout(null);
 		
 		JLabel vehicleHeader = new JLabel("VEHICLE");
-		vehicleHeader.setFont(new Font("Tahoma", Font.BOLD, 20));
+		vehicleHeader.setFont(new Font("Tahoma", Font.BOLD, 32));
 		vehicleHeader.setHorizontalAlignment(SwingConstants.CENTER);
-		vehicleHeader.setBounds(10, 10, 220, 60);
+		vehicleHeader.setBounds(10, 10, 280, 70);
 		vehicleSidePanel.add(vehicleHeader);
 		
 		JLabel vehicleID = new JLabel("ID:");
 		vehicleID.setForeground(new Color(0, 0, 0));
 		vehicleID.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		vehicleID.setBounds(10, 95, 35, 15);
+		vehicleID.setBounds(20, 105, 35, 15);
 		vehicleSidePanel.add(vehicleID);
 		
 		JLabel categoryLbl = new JLabel("Category:");
 		categoryLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		categoryLbl.setBounds(10, 125, 70, 20);
+		categoryLbl.setBounds(20, 145, 70, 20);
 		vehicleSidePanel.add(categoryLbl);
 		
 		JLabel typeLbl = new JLabel("Type:");
 		typeLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		typeLbl.setBounds(10, 160, 45, 20);
+		typeLbl.setBounds(20, 185, 45, 20);
 		vehicleSidePanel.add(typeLbl);
 		
 		JLabel modelLbl = new JLabel("Model:");
 		modelLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		modelLbl.setBounds(10, 200, 45, 15);
+		modelLbl.setBounds(20, 225, 45, 15);
 		vehicleSidePanel.add(modelLbl);
 		
 		JLabel seatsLbl = new JLabel("Seats:");
 		seatsLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		seatsLbl.setBounds(10, 235, 45, 15);
+		seatsLbl.setBounds(20, 265, 45, 15);
 		vehicleSidePanel.add(seatsLbl);
 		
 		JLabel statusLbl = new JLabel("Status:");
 		statusLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		statusLbl.setBounds(10, 270, 45, 15);
+		statusLbl.setBounds(20, 305, 45, 15);
 		vehicleSidePanel.add(statusLbl);
 		
 		idTxt = new JTextField();
 		idTxt.setEditable(false);
 		idTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		idTxt.setBounds(90, 90, 140, 30);
+		idTxt.setBounds(140, 100, 140, 30);
 		vehicleSidePanel.add(idTxt);
 		idTxt.setColumns(10);
 		
 		modelTxt = new JTextField();
 		modelTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		modelTxt.setColumns(10);
-		modelTxt.setBounds(90, 195, 140, 30);
+		modelTxt.setBounds(140, 220, 140, 30);
 		vehicleSidePanel.add(modelTxt);
 		
 		categoryDrop = new JComboBox();
 		categoryDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		categoryDrop.setBounds(90, 125, 140, 30);
+		categoryDrop.setBounds(140, 140, 140, 30);
 		vehicleSidePanel.add(categoryDrop);
 		categoryDrop.addItem("SEDAN");
 		categoryDrop.addItem("SUV");
@@ -202,14 +207,14 @@ public class vehicleMain {
 		
 		typeDrop = new JComboBox();
 		typeDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		typeDrop.setBounds(90, 160, 140, 30);
+		typeDrop.setBounds(140, 180, 140, 30);
 		vehicleSidePanel.add(typeDrop);
 		typeDrop.addItem("Manual");
 		typeDrop.addItem("Automatic");
 		
 		statusDrop = new JComboBox();
 		statusDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		statusDrop.setBounds(90, 265, 140, 30);
+		statusDrop.setBounds(140, 300, 140, 30);
 		vehicleSidePanel.add(statusDrop);
 		statusDrop.addItem("Available");
 		statusDrop.addItem("Rented");
@@ -218,11 +223,11 @@ public class vehicleMain {
 		seatsTxt = new JTextField();
 		seatsTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		seatsTxt.setColumns(10);
-		seatsTxt.setBounds(90, 230, 140, 30);
+		seatsTxt.setBounds(140, 260, 140, 30);
 		vehicleSidePanel.add(seatsTxt);
 		
 		JPanel createVehicle = new JPanel();
-		createVehicle.setBounds(20, 355, 100, 40);
+		createVehicle.setBounds(50, 410, 100, 40);
 		vehicleSidePanel.add(createVehicle);
 		createVehicle.setLayout(null);
 		
@@ -239,7 +244,7 @@ public class vehicleMain {
 		
 		JPanel editVehicle = new JPanel();
 		editVehicle.setLayout(null);
-		editVehicle.setBounds(120, 355, 100, 40);
+		editVehicle.setBounds(150, 410, 100, 40);
 		vehicleSidePanel.add(editVehicle);
 		
 		JLabel smallEdit = new JLabel("");
@@ -265,7 +270,7 @@ public class vehicleMain {
 		
 		JPanel deleteVehicle = new JPanel();
 		deleteVehicle.setLayout(null);
-		deleteVehicle.setBounds(70, 400, 100, 40);
+		deleteVehicle.setBounds(110, 450, 100, 40);
 		vehicleSidePanel.add(deleteVehicle);	
 		
 		JLabel smallDelete = new JLabel("");
@@ -301,7 +306,7 @@ public class vehicleMain {
 		
 		sortDrop = new JComboBox();
 		sortDrop.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sortDrop.setBounds(457, 60, 118, 20);
+		sortDrop.setBounds(475, 60, 120, 20);
 		vehiclePanel.add(sortDrop);
 		sortDrop.addItem("NONE");
 		sortDrop.addItem("SEDAN");
@@ -312,24 +317,24 @@ public class vehicleMain {
 		
 		vehicleTabPanel = new JPanel();
 		vehicleTabPanel.setBackground(new Color(255, 255, 255));
-		vehicleTabPanel.setBounds(0, 110, 125, 50);
-		frame.getContentPane().add(vehicleTabPanel);
+		vehicleTabPanel.setBounds(0, 120, 150, 50);
+		frmAdaMayumiTransport.getContentPane().add(vehicleTabPanel);
 		vehicleTabPanel.setLayout(null);
 		vehicleTabPanel.setOpaque(false);
 		
 		renterTabPanel = new JPanel();
 		renterTabPanel.setBackground(new Color(255, 255, 255));
-		renterTabPanel.setBounds(0, 160, 125, 50);
-		frame.getContentPane().add(renterTabPanel);
+		renterTabPanel.setBounds(0, 170, 150, 50);
+		frmAdaMayumiTransport.getContentPane().add(renterTabPanel);
 		renterTabPanel.setLayout(null);
 		renterTabPanel.setOpaque(false);
 		
 		JLabel vehicleTab = new JLabel("VEHICLE");
-		vehicleTab.setBounds(0, 0, 125, 50);
+		vehicleTab.setHorizontalAlignment(SwingConstants.CENTER);
+		vehicleTab.setBounds(0, 0, 150, 50);
 		vehicleTabPanel.add(vehicleTab);
 		vehicleTab.setForeground(new Color(0, 0, 0));
 		vehicleTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
-		vehicleTab.setHorizontalAlignment(SwingConstants.CENTER);
 		vehicleTab.addMouseListener(new TabButton(vehicleTab){
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -342,7 +347,7 @@ public class vehicleMain {
 		
 		JLabel renterTab = new JLabel("RENTER");
 		renterTab.setBackground(new Color(255, 255, 255));
-		renterTab.setBounds(0, 0, 125, 50);
+		renterTab.setBounds(0, 0, 150, 50);
 		renterTabPanel.add(renterTab);
 		renterTab.setForeground(new Color(0, 0, 0));
 		renterTab.setHorizontalAlignment(SwingConstants.CENTER);
@@ -361,31 +366,32 @@ public class vehicleMain {
 		rentTabPanel.setLayout(null);
 		rentTabPanel.setOpaque(false);
 		rentTabPanel.setBackground(Color.WHITE);
-		rentTabPanel.setBounds(0, 210, 125, 50);
-		frame.getContentPane().add(rentTabPanel);
+		rentTabPanel.setBounds(0, 220, 150, 50);
+		frmAdaMayumiTransport.getContentPane().add(rentTabPanel);
 		
 		JLabel rentTab = new JLabel("RENT");
 		rentTab.setHorizontalAlignment(SwingConstants.CENTER);
 		rentTab.setForeground(Color.BLACK);
 		rentTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
 		rentTab.setBackground(Color.WHITE);
-		rentTab.setBounds(0, 0, 125, 50);
+		rentTab.setBounds(0, 0, 150, 50);
 		rentTabPanel.add(rentTab);
 		
 		historyTabPanel = new JPanel();
 		historyTabPanel.setLayout(null);
 		historyTabPanel.setOpaque(false);
 		historyTabPanel.setBackground(Color.WHITE);
-		historyTabPanel.setBounds(0, 260, 125, 50);
-		frame.getContentPane().add(historyTabPanel);
+		historyTabPanel.setBounds(0, 270, 150, 50);
+		frmAdaMayumiTransport.getContentPane().add(historyTabPanel);
 		
 		JLabel historyTab = new JLabel("HISTORY");
 		historyTab.setHorizontalAlignment(SwingConstants.CENTER);
 		historyTab.setForeground(Color.BLACK);
 		historyTab.setFont(new Font("Lucida Fax", Font.BOLD, 21));
 		historyTab.setBackground(Color.WHITE);
-		historyTab.setBounds(0, 0, 125, 50);
+		historyTab.setBounds(0, 0, 150, 50);
 		historyTabPanel.add(historyTab);
+		historyTabPanel.setVisible(false);
 		
 		rentTab.addMouseListener(new TabButton(rentTab) {
 			@Override
@@ -411,19 +417,19 @@ public class vehicleMain {
 		
 		JLabel logoLbl = new JLabel("");
 		logoLbl.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/logo.png")));
-		logoLbl.setBounds(10, 11, 138, 78);
-		frame.getContentPane().add(logoLbl);
+		logoLbl.setBounds(15, 15, 138, 78);
+		frmAdaMayumiTransport.getContentPane().add(logoLbl);
 		
-		JLabel companyLbl = new JLabel("ADA MAYUMI TRANSPORT AND LOGISTICS MONITORING SYSTEM");
+		JLabel companyLbl = new JLabel("ADA MAYUMI TRANSPORT VEHICLE MONITORING SYSTEM");
 		companyLbl.setForeground(new Color(255, 255, 255));
-		companyLbl.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
-		companyLbl.setBounds(158, 15, 791, 78);
-		frame.getContentPane().add(companyLbl);
+		companyLbl.setFont(new Font("Tw Cen MT", Font.BOLD, 30));
+		companyLbl.setBounds(160, 20, 870, 80);
+		frmAdaMayumiTransport.getContentPane().add(companyLbl);
 		
 		JLabel bgLbl = new JLabel("");
 		bgLbl.setIcon(new ImageIcon(vehicleMain.class.getResource("/img/background.png")));
-		bgLbl.setBounds(0, 0, 959, 589);
-		frame.getContentPane().add(bgLbl);
+		bgLbl.setBounds(0, 0, 1064, 661);
+		frmAdaMayumiTransport.getContentPane().add(bgLbl);
 		
 		displayPanel.add(renterpanel);
 		displayPanel.add(rentpanel);
@@ -441,7 +447,7 @@ public class vehicleMain {
 				sort();
 			}
 		});
-		sortBtn.setBounds(380, 60, 70, 20);
+		sortBtn.setBounds(395, 60, 70, 20);
 		vehiclePanel.add(sortBtn);
 		
 		try {
@@ -484,7 +490,7 @@ public class vehicleMain {
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	        JOptionPane.showMessageDialog(frame, "Failed to load records.", "Error", JOptionPane.ERROR_MESSAGE);
+	        JOptionPane.showMessageDialog(frmAdaMayumiTransport, "Failed to load records.", "Error", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
 	

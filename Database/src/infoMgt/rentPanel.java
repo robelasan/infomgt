@@ -45,11 +45,12 @@ public class rentPanel extends JPanel {
 	private DefaultTableModel rentModel;
 	private Connection connection;
 	private PreparedStatement pst;
+	private JTextField priceTxt;
 
 	
 	public rentPanel() throws ClassNotFoundException {
 
-		setBounds(0, 0, 835, 480);
+		setBounds(0, 0, 915, 540);
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 		
@@ -59,9 +60,10 @@ public class rentPanel extends JPanel {
 		rentModel.addColumn("Vehicle ID");
 		rentModel.addColumn("Start Date");
 		rentModel.addColumn("End Date");
+		rentModel.addColumn("Price");
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 90, 565, 380);
+		scrollPane.setBounds(10, 90, 585, 440);
 		add(scrollPane);
 		rentTable = new JTable(rentModel);
 		scrollPane.setViewportView(rentTable);
@@ -75,86 +77,99 @@ public class rentPanel extends JPanel {
 				Object vehicle = rentModel.getValueAt(selectedrow, 2);
 				Object start = rentModel.getValueAt(selectedrow, 3);
 				Object end = rentModel.getValueAt(selectedrow, 4);
+				Object price = rentModel.getValueAt(selectedrow, 5);
 				
 				rentIDTxt.setText(id.toString());
 				renterIDTxt.setText(renter.toString());
 				vehicleIDTxt.setText(vehicle.toString());
 				startDateTxt.setText(start.toString());
 				endDateTxt.setText(end.toString());
+				priceTxt.setText(price.toString());
 			}
 		});
 		
 		JPanel rentSidePanel = new JPanel();
 		rentSidePanel.setBorder(new LineBorder(new Color(128, 0, 128), 3));
-		rentSidePanel.setBounds(585, 10, 239, 459);
+		rentSidePanel.setBounds(605, 10, 300, 520);
 		add(rentSidePanel);
 		rentSidePanel.setLayout(null);
 		
 		JLabel rentHeader = new JLabel("RENT");
 		rentHeader.setHorizontalAlignment(SwingConstants.CENTER);
-		rentHeader.setFont(new Font("Tahoma", Font.BOLD, 20));
-		rentHeader.setBounds(10, 11, 220, 60);
+		rentHeader.setFont(new Font("Tahoma", Font.BOLD, 32));
+		rentHeader.setBounds(10, 10, 280, 70);
 		rentSidePanel.add(rentHeader);
 		
 		JLabel rentID = new JLabel("ID:");
 		rentID.setForeground(Color.BLACK);
 		rentID.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		rentID.setBounds(10, 95, 35, 15);
+		rentID.setBounds(20, 105, 35, 15);
 		rentSidePanel.add(rentID);
 		
 		rentIDTxt = new JTextField();
 		rentIDTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		rentIDTxt.setEditable(false);
 		rentIDTxt.setColumns(10);
-		rentIDTxt.setBounds(90, 90, 140, 30);
+		rentIDTxt.setBounds(140, 100, 140, 30);
 		rentSidePanel.add(rentIDTxt);
 		
 		renterIDTxt = new JTextField();
 		renterIDTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		renterIDTxt.setColumns(10);
-		renterIDTxt.setBounds(90, 125, 140, 30);
+		renterIDTxt.setBounds(140, 140, 140, 30);
 		rentSidePanel.add(renterIDTxt);
 		
 		vehicleIDTxt = new JTextField();
 		vehicleIDTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		vehicleIDTxt.setColumns(10);
-		vehicleIDTxt.setBounds(90, 160, 140, 30);
+		vehicleIDTxt.setBounds(140, 180, 140, 30);
 		rentSidePanel.add(vehicleIDTxt);
 		
 		startDateTxt = new JTextField();
 		startDateTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		startDateTxt.setColumns(10);
-		startDateTxt.setBounds(90, 195, 140, 30);
+		startDateTxt.setBounds(140, 220, 140, 30);
 		rentSidePanel.add(startDateTxt);
 		
 		endDateTxt = new JTextField();
 		endDateTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		endDateTxt.setColumns(10);
-		endDateTxt.setBounds(90, 230, 140, 30);
+		endDateTxt.setBounds(140, 260, 140, 30);
 		rentSidePanel.add(endDateTxt);
+		
+		priceTxt = new JTextField();
+		priceTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		priceTxt.setColumns(10);
+		priceTxt.setBounds(140, 300, 140, 30);
+		rentSidePanel.add(priceTxt);
 		
 		JLabel renterIDLbl = new JLabel("Renter ID:");
 		renterIDLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		renterIDLbl.setBounds(10, 130, 70, 15);
+		renterIDLbl.setBounds(20, 145, 70, 15);
 		rentSidePanel.add(renterIDLbl);
 		
 		JLabel vehicleIDLbl = new JLabel("Vehicle ID:");
 		vehicleIDLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		vehicleIDLbl.setBounds(10, 165, 70, 15);
+		vehicleIDLbl.setBounds(20, 185, 70, 15);
 		rentSidePanel.add(vehicleIDLbl);
 		
 		JLabel startDateLbl = new JLabel("Start date:");
 		startDateLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		startDateLbl.setBounds(10, 200, 70, 15);
+		startDateLbl.setBounds(20, 225, 70, 15);
 		rentSidePanel.add(startDateLbl);
 		
 		JLabel endDateLbl = new JLabel("End date:");
 		endDateLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		endDateLbl.setBounds(10, 235, 70, 15);
+		endDateLbl.setBounds(20, 265, 65, 15);
 		rentSidePanel.add(endDateLbl);
 		
+		JLabel priceLbl = new JLabel("Price:");
+		priceLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		priceLbl.setBounds(20, 305, 65, 15);
+		rentSidePanel.add(priceLbl);
+		
 		JPanel createRent = new JPanel();
-		createRent.setBounds(20, 355, 100, 40);
+		createRent.setBounds(50, 410, 100, 40);
 		rentSidePanel.add(createRent);
 		createRent.setLayout(null);
 		
@@ -170,7 +185,7 @@ public class rentPanel extends JPanel {
 		bigC.setVisible(false);
 		
 		JPanel editRent = new JPanel();
-		editRent.setBounds(120, 355, 100, 40);
+		editRent.setBounds(150, 410, 100, 40);
 		rentSidePanel.add(editRent);
 		editRent.setLayout(null);
 		
@@ -186,7 +201,7 @@ public class rentPanel extends JPanel {
 		bigE.setVisible(false);
 		
 		JPanel deleteRent = new JPanel();
-		deleteRent.setBounds(70, 400, 100, 40);
+		deleteRent.setBounds(110, 450, 100, 40);
 		rentSidePanel.add(deleteRent);
 		deleteRent.setLayout(null);
 		
@@ -258,8 +273,9 @@ public class rentPanel extends JPanel {
 	            int renterID = resultSet.getInt("renter_id");
 	            int vehicleID = resultSet.getInt("vehicle_id");
 	            String startDate = resultSet.getString("start_date"); // Rename this variable
-	            String endDate = resultSet.getString("end_date");	             
-	            rentModel.addRow(new Object[]{id, renterID, vehicleID, startDate, endDate});
+	            String endDate = resultSet.getString("end_date");
+	            float price = resultSet.getFloat("price");
+	            rentModel.addRow(new Object[]{id, renterID, vehicleID, startDate, endDate, price});
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -270,12 +286,13 @@ public class rentPanel extends JPanel {
 	private void create() {
 		
 			try {
-				pst = connection.prepareStatement("insert into Rent(renter_id, vehicle_id, start_date, end_date)values(?,?,?,?)");
+				pst = connection.prepareStatement("insert into Rent(renter_id, vehicle_id, start_date, end_date, price)values(?,?,?,?,?)");
 			
 				pst.setObject(1, renterIDTxt.getText());
 				pst.setObject(2, vehicleIDTxt.getText());
 				pst.setObject(3, startDateTxt.getText());
 				pst.setObject(4, endDateTxt.getText());
+				pst.setObject(5, priceTxt.getText());
 				pst.executeUpdate();
 				loadRecords();
 			}
@@ -297,12 +314,13 @@ public class rentPanel extends JPanel {
 			 
 					try {
 						Object id = rentTable.getValueAt(selectedRow, 0);
-					pst = connection.prepareStatement("UPDATE Rent SET renter_id = ?, vehicle_id = ?, start_date = ?, end_date = ? WHERE rent_id = ?");
+					pst = connection.prepareStatement("UPDATE Rent SET renter_id = ?, vehicle_id = ?, start_date = ?, end_date = ?, price = ? WHERE rent_id = ?");
 					pst.setObject(1, renterIDTxt.getText());
 					pst.setObject(2, vehicleIDTxt.getText());
 					pst.setObject(3, startDateTxt.getText());
 			        pst.setObject(4, endDateTxt.getText());
-			        pst.setObject(5, id);
+			        pst.setObject(5, priceTxt.getText());
+			        pst.setObject(6, id);
 				 
 					pst.executeUpdate();
 					JOptionPane.showMessageDialog(null, "Record updated successfully.");

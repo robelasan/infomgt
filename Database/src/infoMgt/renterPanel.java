@@ -48,7 +48,7 @@ public class renterPanel extends JPanel {
 	
 	public renterPanel() throws ClassNotFoundException {
 
-		setBounds(0, 0, 835, 480);
+		setBounds(0, 0, 915, 540);
 		setLayout(null);
 		setBackground(new Color(255, 255, 255));
 		
@@ -60,7 +60,7 @@ public class renterPanel extends JPanel {
 		renterModel.addColumn("Address");
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 90, 565, 380);
+		scrollPane.setBounds(10, 90, 585, 440);
 		add(scrollPane);
 		renterTable = new JTable(renterModel);
 		scrollPane.setViewportView(renterTable);
@@ -87,76 +87,76 @@ public class renterPanel extends JPanel {
 		
 		renterSidePanel = new JPanel();
 		renterSidePanel.setBorder(new LineBorder(new Color(128, 0, 128), 3));
-		renterSidePanel.setBounds(585, 10, 239, 459);
+		renterSidePanel.setBounds(605, 10, 300, 520);
 		add(renterSidePanel);
 		renterSidePanel.setLayout(null);
 	
 		JLabel renterHeader = new JLabel("RENTER");
 		renterHeader.setHorizontalAlignment(SwingConstants.CENTER);
-		renterHeader.setFont(new Font("Tahoma", Font.BOLD, 20));
-		renterHeader.setBounds(10, 10, 220, 60);
+		renterHeader.setFont(new Font("Tahoma", Font.BOLD, 32));
+		renterHeader.setBounds(10, 10, 280, 70);
 		renterSidePanel.add(renterHeader);
 		
 		JLabel renterID = new JLabel("ID:");
 		renterID.setForeground(Color.BLACK);
 		renterID.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		renterID.setBounds(10, 95, 35, 15);
+		renterID.setBounds(20, 105, 35, 15);
 		renterSidePanel.add(renterID);
 	
 		JLabel fnameLbl = new JLabel("First name:");
 		fnameLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		fnameLbl.setBounds(10, 130, 70, 15);
+		fnameLbl.setBounds(20, 145, 70, 15);
 		renterSidePanel.add(fnameLbl);
 		
 		JLabel lnameLbl = new JLabel("Last name:");
 		lnameLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lnameLbl.setBounds(10, 165, 70, 15);
+		lnameLbl.setBounds(20, 185, 70, 15);
 		renterSidePanel.add(lnameLbl);
 		
 		JLabel phoneLbl = new JLabel("Phone:");
 		phoneLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		phoneLbl.setBounds(10, 200, 65, 15);
+		phoneLbl.setBounds(20, 225, 65, 15);
 
 		renterSidePanel.add(phoneLbl);
 		
 		JLabel addressLbl = new JLabel("Address:");
 		addressLbl.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addressLbl.setBounds(10, 238, 65, 15);
+		addressLbl.setBounds(20, 265, 65, 15);
 		renterSidePanel.add(addressLbl);
 		
 		renterIDTxt = new JTextField();
 		renterIDTxt.setEditable(false);
 		renterIDTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		renterIDTxt.setBounds(90, 90, 140, 30);
+		renterIDTxt.setBounds(140, 100, 140, 30);
 		renterIDTxt.setColumns(10);
 		renterSidePanel.add(renterIDTxt);	
 		
 		fnameTxt = new JTextField();
 		fnameTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		fnameTxt.setColumns(10);
-		fnameTxt.setBounds(90, 125, 140, 30);
+		fnameTxt.setBounds(140, 140, 140, 30);
 		renterSidePanel.add(fnameTxt);
 		
 		lnameTxt = new JTextField();
 		lnameTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lnameTxt.setColumns(10);
-		lnameTxt.setBounds(90, 160, 140, 30);
+		lnameTxt.setBounds(140, 180, 140, 30);
 		renterSidePanel.add(lnameTxt);
 		
 		phoneTxt = new JTextField();
 		phoneTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		phoneTxt.setColumns(10);
-		phoneTxt.setBounds(90, 195, 140, 30);
+		phoneTxt.setBounds(140, 220, 140, 30);
 		renterSidePanel.add(phoneTxt);
 		
 		addressTxt = new JTextField();
 		addressTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		addressTxt.setColumns(10);
-		addressTxt.setBounds(90, 230, 140, 30);
+		addressTxt.setBounds(140, 260, 140, 30);
 		renterSidePanel.add(addressTxt);
 		
 		JPanel createRenter = new JPanel();
-		createRenter.setBounds(20, 355, 100, 40);
+		createRenter.setBounds(50, 410, 100, 40);
 		renterSidePanel.add(createRenter);
 		createRenter.setLayout(null);
 	
@@ -171,7 +171,7 @@ public class renterPanel extends JPanel {
 		createRenter.add(bigC);
 		
 		JPanel editRenter = new JPanel();
-		editRenter.setBounds(120, 355, 100, 40);
+		editRenter.setBounds(150, 410, 100, 40);
 		renterSidePanel.add(editRenter);
 		editRenter.setLayout(null);
 		
@@ -186,7 +186,7 @@ public class renterPanel extends JPanel {
 		editRenter.add(bigE);
 		
 		JPanel deleteRenter = new JPanel();
-		deleteRenter.setBounds(70, 400, 100, 40);
+		deleteRenter.setBounds(110, 450, 100, 40);
 		renterSidePanel.add(deleteRenter);
 		deleteRenter.setLayout(null);
 		
